@@ -4,7 +4,7 @@ Generalized harmonic least-squares amplitude and phase estimation method
 Notes
 -----
 An optimisation approach which aims at minimizing the sum of the squared residuals when fitting
-sinusoids of known frequencies to a time series of discrete measurements. 
+sinusoids of known frequencies to a time series of discrete measurements. Also included is a windowed linear detrend function with optional window overlap for pre-processing of non-uniformly sampled data.
     
 References
 ----------
