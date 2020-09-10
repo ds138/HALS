@@ -7,18 +7,13 @@ Created on Thu Feb 27 08:52:06 2020
 import os
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
+from matplotlib.patches import Rectangle
 import numpy as np
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
-register_matplotlib_converters()
 
-from matplotlib.patches import Rectangle
 import re
 import pickle
-import signaltools as st
-from astropy.timeseries import LombScargle
-from scipy import signal
-
+import HALS as hals
 
 #%% load data
 cwd = os.getcwd()
@@ -64,7 +59,7 @@ dt_time  = raw_data.loc[idx,dt_col]
 fig, ax = plt.subplots(nrows= 2,figsize=(8.0,4.0), sharex = True) # ,sharey=True
 ax[0].plot(raw_data[dt_col],site, color = "blue")
 ax[1].scatter(dt_time[1:],np.round(1.0/baro_dt,0), color = "red",s=4)
-ax[1].set_yscale("log")
+#ax[1].set_yscale("log")
 ax[1].set_ylabel("Sampling\nfrequency\n[$s * d^{-1}$]")
 ax[0].set_ylabel("Barometric\nPressure\n[m]")
 fig.autofmt_xdate()
@@ -85,12 +80,10 @@ fqs_num = et_freqs
 # detrending
 detrend_day = 3
 
-fig, ax = plt.subplots(nrows = 2,ncols= 2,figsize=(8.0,3.0),sharex="col") # ,sharey=True
+fig, ax = plt.subplots(nrows = 2,ncols= 1,figsize=(8.0,3.0),sharex="col") # ,sharey=True
 
 for i,s in zip(range(2),[baro,site]):
-    detrend_data = st.lin_window_ovrlp(time, s.values, detrend_day)
-    # lomb scargle
-    lsp_fqs, lsp_pow = LombScargle(rel_time, detrend_data).autopower(minimum_frequency=0.5, maximum_frequency=2.5)
+    detrend_data = hals.lin_window_ovrlp(time, s.values, detrend_day)
     ax[1,0].plot(raw_data[dt_col],site, color = "blue")
     ax[1,0].set_ylabel("Pressure\nHead [m]")
     ax[1,0].set_xlabel("Time [date]")
@@ -104,12 +97,6 @@ for i,s in zip(range(2),[baro,site]):
     # format the coords message box
     ax[i,0].format_xdata = mdates.DateFormatter('%Y-%m-%d')
         
-    ax[i,1].plot(lsp_fqs, np.sqrt(lsp_pow))
-    ax[i,1].set_ylim(bottom=0)
-    ax[i,1].set_ylabel('$\sqrt{Power}$')
-    ax[1,1].set_xlabel("Frequency [cpd]")
-    
-    #ax[i,1].plot(fqs_num, result.amp_est, 'gx')
 
 fig.autofmt_xdate()   
 plt.tight_layout()

@@ -141,5 +141,5 @@ def lin_window_ovrlp(time,y,length=3,stopper=3,n_ovrlp=2):
         # replace nan-values assuming a mean of zero
         y_detrend[np.isnan(y_detrend)] = 0.0
 
-    return y.detrend
+    return y_detrend
         
